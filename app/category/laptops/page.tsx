@@ -24,7 +24,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.1,
+      delayChildren: 0.2
     }
   }
 }
@@ -35,7 +36,8 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5
+      duration: 0.3,
+      ease: "easeOut"
     }
   }
 }
@@ -167,15 +169,16 @@ export default function LaptopsPage() {
               <motion.div
                 key={product.id}
                 variants={itemVariants}
-                whileHover={{ y: -5 }}
-                className="group relative bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                className="group relative bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform-gpu"
               >
                 <div className="aspect-square relative overflow-hidden">
                   <Image
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                    className="object-cover group-hover:scale-110 transition-transform duration-300 transform-gpu"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -211,8 +214,8 @@ export default function LaptopsPage() {
                               : "text-gray-300"
                           }`}
                         />
-        ))}
-      </div>
+                      ))}
+                    </div>
                     <span className="text-sm text-muted-foreground">
                       ({product.reviews} reviews)
                     </span>

@@ -216,11 +216,11 @@ export default function HomePage() {
             className="absolute inset-0 -z-10"
           >
             <Image
-              src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=1920&auto=format&fit=crop&q=80"
+              src="/images/hero-bg.jpg"
               alt="Hero Background"
               fill
-              className="object-cover opacity-20"
               priority
+              className="object-cover"
             />
           </motion.div>
         </div>
@@ -318,6 +318,7 @@ export default function HomePage() {
                     src={product.image}
                     alt={product.name}
                     fill
+                    loading="lazy"
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
