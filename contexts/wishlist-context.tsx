@@ -1,23 +1,21 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
-import { Product } from "@/lib/products"
+import { Product } from "@/types"
 
 interface WishlistContextType {
-  wishlist: string[]
-  addToWishlist: (productId: string) => void
+  wishlist: Product[]
+  addToWishlist: (product: Product) => void
   removeFromWishlist: (productId: string) => void
   isInWishlist: (productId: string) => boolean
   clearWishlist: () => void
-  wishlistProducts: Product[]
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [wishlist, setWishlist] = useState<string[]>([])
+  const [wishlist, setWishlist] = useState<Product[]>([])
 
-  // Load wishlist from localStorage on mount
   useEffect(() => {
     const savedWishlist = localStorage.getItem("wishlist")
     if (savedWishlist) {
@@ -25,28 +23,31 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const saveWishlist = useCallback((newWishlist: string[]) => {
+  const saveWishlist = useCallback((newWishlist: Product[]) => {
     localStorage.setItem("wishlist", JSON.stringify(newWishlist))
   }, [])
 
-  const addToWishlist = useCallback((productId: string) => {
+  const addToWishlist = useCallback((product: Product) => {
     setWishlist(prev => {
-      const newWishlist = [...prev, productId]
-      saveWishlist(newWishlist)
-      return newWishlist
+      if (!prev.some(item => item.id === product.id)) {
+        const newWishlist = [...prev, product]
+        saveWishlist(newWishlist)
+        return newWishlist
+      }
+      return prev
     })
   }, [saveWishlist])
 
   const removeFromWishlist = useCallback((productId: string) => {
     setWishlist(prev => {
-      const newWishlist = prev.filter(id => id !== productId)
+      const newWishlist = prev.filter(item => item.id !== productId)
       saveWishlist(newWishlist)
       return newWishlist
     })
   }, [saveWishlist])
 
   const isInWishlist = useCallback((productId: string) => {
-    return wishlist.includes(productId)
+    return wishlist.some(item => item.id === productId)
   }, [wishlist])
 
   const clearWishlist = useCallback(() => {
@@ -54,19 +55,13 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("wishlist")
   }, [])
 
-  const wishlistProducts = wishlist.map(id => {
-    // This is a placeholder - you'll need to implement getProductById
-    return { id } as Product
-  })
-
   const value = useMemo(() => ({
     wishlist,
     addToWishlist,
     removeFromWishlist,
     isInWishlist,
-    clearWishlist,
-    wishlistProducts,
-  }), [wishlist, addToWishlist, removeFromWishlist, isInWishlist, clearWishlist, wishlistProducts])
+    clearWishlist
+  }), [wishlist, addToWishlist, removeFromWishlist, isInWishlist, clearWishlist])
 
   return (
     <WishlistContext.Provider value={value}>
